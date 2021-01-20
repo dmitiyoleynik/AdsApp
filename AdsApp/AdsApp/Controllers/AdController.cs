@@ -1,0 +1,68 @@
+﻿using BL.Services;
+using DAL.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace AdsApp.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class AdController : ControllerBase
+    {
+        private readonly IAdService _adService;
+
+        public AdController(IAdService adService)
+        {
+            _adService = adService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Ad>> GetAsync(int id)
+        {
+            return await _adService.GetAdAsync(id);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<int>> PostAsync(Ad ad)
+        {
+            if (ad == null)
+            {
+                return BadRequest();
+            }
+
+            var id = await _adService.CreateAdAsync(ad);
+
+            return Ok(id);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<Ad>> PutAsync(Ad ad)
+        {
+            if (ad == null)
+            {
+                return BadRequest();
+            }
+
+            var id = await _adService.UpdateAdAsync(ad);
+
+            return Ok(id);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAsync(int id)
+        {
+            var isDeleted = await _adService.DeleteAdAsync(id);
+
+            if (isDeleted)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return NotFound();
+            }
+
+
+        }
+    }
+}

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdsApp", "AdsApp\AdsApp.csproj", "{CDCF03A9-78F7-4272-8C8A-7BA8F426D9BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdsApp", "AdsApp\AdsApp.csproj", "{CDCF03A9-78F7-4272-8C8A-7BA8F426D9BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{FB8A3560-1744-4D7E-B601-E4DE344EAAE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{F20CEDA9-1CBC-47C0-ACA2-F5F04C5AC67C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{CDCF03A9-78F7-4272-8C8A-7BA8F426D9BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDCF03A9-78F7-4272-8C8A-7BA8F426D9BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDCF03A9-78F7-4272-8C8A-7BA8F426D9BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8A3560-1744-4D7E-B601-E4DE344EAAE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8A3560-1744-4D7E-B601-E4DE344EAAE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8A3560-1744-4D7E-B601-E4DE344EAAE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8A3560-1744-4D7E-B601-E4DE344EAAE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F20CEDA9-1CBC-47C0-ACA2-F5F04C5AC67C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F20CEDA9-1CBC-47C0-ACA2-F5F04C5AC67C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F20CEDA9-1CBC-47C0-ACA2-F5F04C5AC67C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F20CEDA9-1CBC-47C0-ACA2-F5F04C5AC67C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
