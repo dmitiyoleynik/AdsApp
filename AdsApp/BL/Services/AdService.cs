@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using DAL.Exceptions;
+using DAL.Models;
 using DAL.Repositories;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,16 @@ namespace BL.Services
             return await _adRepository.GetAsync(id);
         }
 
-        public async Task<bool> DeleteAdAsync(int id)
+        public async Task DeleteAdAsync(int id)
         {
-            return await _adRepository.DeleteAsync(id);
+            try
+            {
+                await _adRepository.DeleteAsync(id);
+            }
+            catch (Exception)
+            {
+                throw new RecordNotFoundException();
+            }
         }
 
         public async Task<Ad> UpdateAdAsync(Ad ad)

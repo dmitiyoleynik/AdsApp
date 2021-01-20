@@ -11,6 +11,6 @@ namespace DAL.Repositories
         Task<int> CreateAsync(Models.Ad ad);
         Task<Ad> GetAsync(int id);
         Task<Ad> UpdateAsync(Models.Ad ad);
-        Task<bool> DeleteAsync(int id);
+        Task DeleteAsync(int id);
     }
 }

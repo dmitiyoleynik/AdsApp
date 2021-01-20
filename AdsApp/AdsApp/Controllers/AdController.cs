@@ -1,4 +1,5 @@
 ﻿using BL.Services;
+using DAL.Exceptions;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -51,18 +52,16 @@ namespace AdsApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAsync(int id)
         {
-            var isDeleted = await _adService.DeleteAdAsync(id);
-
-            if (isDeleted)
+            try
             {
-                return NoContent();
+                await _adService.DeleteAdAsync(id);
             }
-            else
+            catch (RecordNotFoundException)
             {
-                return NotFound();
+                return BadRequest();
             }
 
-
+            return NoContent();
         }
     }
 }

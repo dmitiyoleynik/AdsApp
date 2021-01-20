@@ -18,11 +18,5 @@
     <ProjectReference Include="..\DAL\DAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 
 </Project>

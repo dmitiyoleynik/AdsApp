@@ -30,22 +30,15 @@ namespace DAL.Repositories
             return _context.Ads.FirstOrDefault(x => x.Content == ad.Content && x.Type == ad.Type && x.Category == ad.Category && x.Cost == ad.Cost).Id;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            bool isDeleted = false;
+            var ad = await _context.Ads.FirstAsync(x => x.Id == id && x.Deleted == null);
 
-            var ad = await _context.Ads.FirstOrDefaultAsync(x => x.Id == id);
+            ad.Deleted = DateTime.Now;
+            ad.Updated = DateTime.Now;
 
-            if (ad != null && ad.Deleted == null)
-            {
-                ad.Deleted = DateTime.Now;
-                ad.Updated = DateTime.Now;
-                _context.Ads.Update(ad);
-                await _context.SaveChangesAsync();
-                isDeleted = true;
-            }
-
-            return isDeleted;
+            _context.Ads.Update(ad);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Models.Ad> GetAsync(int id)

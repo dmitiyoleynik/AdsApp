@@ -10,7 +10,7 @@ namespace BL.Services
     {
         Task<int> CreateAdAsync(Ad ad);
         Task<Ad> GetAdAsync(int id);
-        Task<bool> DeleteAdAsync(int id);
+        Task DeleteAdAsync(int id);
         Task<Ad> UpdateAdAsync(Ad ad);
     }
 }
