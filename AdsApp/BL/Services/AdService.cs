@@ -40,7 +40,14 @@ namespace BL.Services
 
         public async Task<Ad> UpdateAdAsync(Ad ad)
         {
-            return await _adRepository.UpdateAsync(ad);
+            try
+            {
+                return await _adRepository.UpdateAsync(ad);
+            }
+            catch (Exception)
+            {
+                throw new RecordNotFoundException();
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -49,19 +48,16 @@ namespace DAL.Repositories
 
         public async Task<Models.Ad> UpdateAsync(Models.Ad ad)
         {
-            var oldAd = await _context.Ads.FirstOrDefaultAsync(x => x.Id == ad.Id);
+            var oldAd = await _context.Ads.FirstAsync(x => x.Id == ad.Id && x.Deleted == null);
 
-            _context.Ads.Update(new EFModels.Ad
-            {
-                Id = ad.Id,
-                Category = ad.Category,
-                Type = ad.Type,
-                Cost = ad.Cost,
-                Content = ad.Content,
-                IsActive = ad.IsActive,
-                Updated = DateTime.Now
-            });
+            oldAd.Type = ad.Type;
+            oldAd.Category = ad.Category;
+            oldAd.Content = ad.Content;
+            oldAd.Cost = ad.Cost;
+            oldAd.IsActive = ad.IsActive;
+            oldAd.Updated = DateTime.Now;
 
+            _context.Ads.Update(oldAd);
             await _context.SaveChangesAsync();
 
             return ad;

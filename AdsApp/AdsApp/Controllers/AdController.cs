@@ -39,14 +39,16 @@ namespace AdsApp.Controllers
         [HttpPut]
         public async Task<ActionResult<Ad>> PutAsync(Ad ad)
         {
-            if (ad == null)
+            try
+            {
+                var id = await _adService.UpdateAdAsync(ad);
+             
+                return Ok(id);
+            }
+            catch (RecordNotFoundException)
             {
                 return BadRequest();
             }
-
-            var id = await _adService.UpdateAdAsync(ad);
-
-            return Ok(id);
         }
 
         [HttpDelete("{id}")]
