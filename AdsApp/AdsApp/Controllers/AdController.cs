@@ -26,10 +26,8 @@ namespace AdsApp.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> PostAsync(Ad ad)
         {
-            if (ad == null)
-            {
+            if (!ModelState.IsValid)
                 return BadRequest();
-            }
 
             var id = await _adService.CreateAdAsync(ad);
 
