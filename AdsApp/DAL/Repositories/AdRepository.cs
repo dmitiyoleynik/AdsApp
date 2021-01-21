@@ -23,6 +23,7 @@ namespace DAL.Repositories
                 Cost = ad.Cost,
                 Content = ad.Content,
                 IsActive = ad.IsActive,
+                Tags = ad.Tags.Select(x=>new EFModels.Tag { Value = x }).ToList(),
                 Updated = DateTime.Now
             });
             await _context.SaveChangesAsync();

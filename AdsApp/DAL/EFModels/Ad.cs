@@ -11,6 +11,7 @@ namespace DAL.EFModels
         public AdCategory Category { get; set; }
         public float Cost { get; set; }
         public string Content { get; set; }
+        public List<Tag> Tags { get; set; }
 
         public int Views { get; set; }
         public bool IsActive { get; set; }

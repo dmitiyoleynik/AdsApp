@@ -17,5 +17,6 @@ namespace DAL.Models
         [Required(ErrorMessage = "required")]
         public string Content { get; set; }
         public bool IsActive { get; set; }
+        public List<string> Tags { get; set; }
     }
 }
