@@ -12,6 +12,7 @@ namespace DAL.EFModels
         public float Cost { get; set; }
         public string Content { get; set; }
 
+        public int Views { get; set; }
         public bool IsActive { get; set; }
         public DateTime Updated { get; set; }
         public DateTime? Deleted { get; set; }
