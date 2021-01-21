@@ -56,7 +56,7 @@ namespace BL.Services
             {
                 var response = new AdResponse();
                 var token = _nextTokenService.Decode(encodedToken);
-                var ad = await _adRepository.GetNextAsync(token.LastShownAdId,token.Type, token.Category);
+                var ad = await _adRepository.GetNextAsync(token.Type, token.Category, token.LastShownAdId);
 
                 token.LastShownAdId = ad.Id;
                 response.Ad = ad;
@@ -80,7 +80,7 @@ namespace BL.Services
             try
             {
                 var adResponse = new AdResponse();
-                var ad = await _adRepository.GetAsync(type,category);
+                var ad = await _adRepository.GetNextAsync(type,category);
                 var token = new NextToken();
 
                 token.Category = category;

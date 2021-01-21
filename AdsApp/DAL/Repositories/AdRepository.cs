@@ -40,21 +40,16 @@ namespace DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Models.Ad> GetAsync(AdType? type, AdCategory? category)
+        public async Task<Models.Ad> GetNextAsync(AdType? type, AdCategory? category, int lastShownAdId = 0)
         {
             var query = AddFilters(_context.Ads.Where(x => x.Deleted == null), type, category);
-            var ad = await query.FirstAsync(x=>x.IsActive);
+            var ad = await query.FirstAsync(x => x.IsActive && x.Id > lastShownAdId);
+            ad.Views++;
+            
+            _context.Ads.Update(ad);
+            await _context.SaveChangesAsync();
 
-            return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
-        }
-
-        public async Task<Models.Ad> GetNextAsync(int lastShownAdId, AdType? type, AdCategory? category)
-        {
-
-            var query = AddFilters(_context.Ads.Where(x => x.Deleted == null), type, category);
-            var ad = await query.FirstAsync(x => x.IsActive && x.Id>lastShownAdId);
-
-            return new Models.Ad { Id=ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content=ad.Content, IsActive = ad.IsActive };
+            return new Models.Ad { Id = ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
         }
 
         public async Task<Models.Ad> UpdateAsync(Models.Ad ad)
@@ -74,7 +69,7 @@ namespace DAL.Repositories
             return ad;
         }
 
-        private IQueryable<EFModels.Ad> AddFilters( IQueryable<EFModels.Ad> query,AdType? type, AdCategory? category)
+        private IQueryable<EFModels.Ad> AddFilters(IQueryable<EFModels.Ad> query, AdType? type, AdCategory? category)
         {
             if (type != null)
             {
