@@ -1,4 +1,5 @@
-﻿using DAL.Models;
+﻿using BL.DTO;
+using DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,6 +11,8 @@ namespace BL.Services
     {
         Task<int> CreateAdAsync(Ad ad);
         Task<Ad> GetAdAsync(int id);
+        Task<AdResponse> GetAdByTokenAsync(string token);
+        Task<AdResponse> GetAdWithNoTokenAsync();
         Task DeleteAdAsync(int id);
         Task<Ad> UpdateAdAsync(Ad ad);
     }

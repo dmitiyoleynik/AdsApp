@@ -43,7 +43,23 @@ namespace DAL.Repositories
         public async Task<Models.Ad> GetAsync(int id)
         {
             var ad = await _context.Ads.FirstOrDefaultAsync(x => x.Id == id);
+            
             return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
+        }
+
+        public async Task<Models.Ad> GetAsync()
+        {
+            var ad = await _context.Ads.FirstAsync(x=>x.IsActive&&x.Deleted==null);
+
+            return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
+        }
+
+        public async Task<Models.Ad> GetNextAsync(int lastShownAdId)
+        {
+            var ad = await _context.Ads//.SkipWhile(x => x.Id <= lastShownAdId)
+                .FirstAsync(x => x.Deleted == null && x.IsActive && x.Id>lastShownAdId);
+
+            return new Models.Ad { Id=ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content=ad.Content, IsActive = ad.IsActive };
         }
 
         public async Task<Models.Ad> UpdateAsync(Models.Ad ad)

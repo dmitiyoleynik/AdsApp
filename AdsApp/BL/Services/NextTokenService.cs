@@ -1,29 +1,34 @@
 ﻿using BL.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 
 namespace BL.Services
 {
-    class NextTokenService : INextTokenService
+    public class NextTokenService : INextTokenService
     {
-        public NextTokenService()
+        public NextToken Decode(string token)
         {
+            var decodedToken = Base64Decode(token);
+            var deserializedToken = JsonSerializer.Deserialize<NextToken>(decodedToken);
 
-        }
-        public NextToken Decode(string encodedToken)
-        {
-            var decodedToken = JsonSerializer.Deserialize<NextToken>(encodedToken);
-
-            return decodedToken;
+            return deserializedToken;
         }
 
         public string Encode(NextToken token)
         {
-            var encodedToken = JsonSerializer.Serialize<NextToken>(token);
+            var serializedToken = JsonSerializer.Serialize<NextToken>(token);
+            var encodedToken = Base64Encode(serializedToken);
 
             return encodedToken;
+        }
+        public string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+        public string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
     }
 }

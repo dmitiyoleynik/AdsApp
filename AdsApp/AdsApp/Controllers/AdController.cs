@@ -1,4 +1,5 @@
-﻿using BL.Services;
+﻿using BL.DTO;
+using BL.Services;
 using DAL.Exceptions;
 using DAL.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -17,10 +18,37 @@ namespace AdsApp.Controllers
             _adService = adService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Ad>> GetAsync(int id)
+        [HttpGet]
+        public async Task<ActionResult<AdResponse>> GetWithToken([FromQuery(Name = "token")] string token)
         {
-            return await _adService.GetAdAsync(id);
+            ActionResult actionResult;
+
+            try
+            {
+                if (token!=null)
+                {
+                    var response = await _adService.GetAdByTokenAsync(token);
+                    actionResult = Ok(response);
+                }
+                else
+                {
+                    var response = await _adService.GetAdWithNoTokenAsync();
+                    actionResult = Ok(response);
+                }
+            }
+            catch (System.Exception)
+            {
+                if (token!=null)
+                {
+                    actionResult = Ok("Queue is finished.");
+                }
+                else
+                {
+                    actionResult = BadRequest();
+                }
+            }
+
+            return actionResult;
         }
 
         [HttpPost]

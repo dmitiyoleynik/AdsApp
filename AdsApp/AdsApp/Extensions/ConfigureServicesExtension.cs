@@ -20,6 +20,7 @@ namespace AdsApp.Extensions
         public static IServiceCollection ConfigureBL(this IServiceCollection services)
         {
             services.AddScoped<IAdService, AdService>();
+            services.AddScoped<INextTokenService, NextTokenService>();
 
             return services;
         }
