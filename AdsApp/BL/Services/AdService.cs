@@ -6,6 +6,7 @@ using DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace BL.Services
@@ -70,6 +71,10 @@ namespace BL.Services
 
                 return response;
 
+            }
+            catch (JsonException)
+            {
+                throw new InvalidNextTokenException();
             }
             catch (Exception)
             {

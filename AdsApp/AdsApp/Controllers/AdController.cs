@@ -36,9 +36,13 @@ namespace AdsApp.Controllers
                     actionResult = Ok(response);
                 }
             }
-            catch (System.Exception)
+            catch (InvalidNextTokenException)
             {
-                if (token!=null)
+                actionResult = BadRequest();
+            }
+            catch (RecordNotFoundException)
+            {
+                if (token != null)
                 {
                     actionResult = Ok("Queue is finished.");
                 }
