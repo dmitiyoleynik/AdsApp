@@ -13,5 +13,6 @@ namespace BL.Services
         Task<AdResponse> GetAdWithNoTokenAsync(AdType? type, AdCategory? category);
         Task DeleteAdAsync(int id);
         Task<Ad> UpdateAdAsync(Ad ad);
+        Task<Statistics> GetStatistics();
     }
 }

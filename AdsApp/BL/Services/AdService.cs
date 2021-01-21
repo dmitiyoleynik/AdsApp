@@ -4,6 +4,7 @@ using DAL.Exceptions;
 using DAL.Models;
 using DAL.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -95,6 +96,16 @@ namespace BL.Services
             {
                 throw new RecordNotFoundException();
             }
+        }
+
+        public async Task<Statistics> GetStatistics()
+        {
+            var statistics = new Statistics();
+            statistics.TopCategories = await _adRepository.TopCategories(3);
+            statistics.TopAds = await _adRepository.TopAds(10);
+            statistics.RequestsPerType = await _adRepository.GetViewsPerType();
+
+            return statistics;
         }
     }
 }

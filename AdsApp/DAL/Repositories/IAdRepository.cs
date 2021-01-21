@@ -11,5 +11,9 @@ namespace DAL.Repositories
         Task<Ad> UpdateAsync(Models.Ad ad);
         Task DeleteAsync(int id);
         Task<Ad> GetNextAsync( AdType? type, AdCategory? category, int lastShownAdId=0);
+        Task<Dictionary<AdType, int>> GetViewsPerType();
+        Task<List<AdCategory>> TopCategories(int quantity);
+        Task<List<Ad>> TopAds(int quantity);
+
     }
 }

@@ -96,5 +96,11 @@ namespace AdsApp.Controllers
 
             return NoContent();
         }
+      
+        [HttpGet("statistics")]
+        public async Task<Statistics> Statistics()
+        {
+            return await _adService.GetStatistics();
+        }
     }
 }

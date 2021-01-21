@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -45,11 +46,54 @@ namespace DAL.Repositories
             var query = AddFilters(_context.Ads.Where(x => x.Deleted == null), type, category);
             var ad = await query.FirstAsync(x => x.IsActive && x.Id > lastShownAdId);
             ad.Views++;
-            
+
             _context.Ads.Update(ad);
             await _context.SaveChangesAsync();
 
             return new Models.Ad { Id = ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
+        }
+
+        public async Task<Dictionary<AdType, int>> GetViewsPerType()
+        {
+            var dict = new Dictionary<AdType, int>();
+            var viewsPerType = await _context.Ads.Where(x => x.Deleted == null)
+                .Where(x => x.IsActive)
+                .GroupBy(x => x.Type)
+                .Select(g => new { Type = g.Key, Views = g.Sum(x => x.Views) })
+                .ToListAsync();
+
+            foreach (var viewPerType in viewsPerType)
+            {
+                dict.Add(viewPerType.Type, viewPerType.Views);
+            }
+
+            return dict;
+        }
+
+        public async Task<List<Models.Ad>> TopAds(int quantity)
+        {
+            var ads = await _context.Ads.Where(x => x.Deleted == null)
+                .Where(x => x.IsActive)
+                .OrderBy(x => x.Views)
+                .Take(quantity)
+                .Select(x => new Models.Ad { Type = x.Type, Category = x.Category, Content = x.Content, Cost = x.Cost, IsActive = x.IsActive })
+                .ToListAsync();
+
+            return ads;
+        }
+
+        public async Task<List<AdCategory>> TopCategories(int quantity)
+        {
+            var categories = await _context.Ads.Where(x => x.Deleted == null)
+                .Where(x => x.IsActive)
+                .GroupBy(x => x.Category)
+                .Select(g => new { Categry = g.Key, Views = g.Sum(x => x.Views) })
+                .OrderBy(x => x.Views)
+                .Take(3)
+                .Select(x => x.Categry)
+                .ToListAsync();
+
+            return categories;
         }
 
         public async Task<Models.Ad> UpdateAsync(Models.Ad ad)
