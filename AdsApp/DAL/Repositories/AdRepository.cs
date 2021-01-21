@@ -47,17 +47,40 @@ namespace DAL.Repositories
             return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
         }
 
-        public async Task<Models.Ad> GetAsync()
+        public async Task<Models.Ad> GetAsync(AdType? type, AdCategory? category)
         {
-            var ad = await _context.Ads.FirstAsync(x=>x.IsActive&&x.Deleted==null);
+            var query = _context.Ads.Where(x=>x.Deleted==null);
+
+            if (type!=null)
+            {
+                query = query.Where(x => x.Type == type.Value);
+            }
+
+            if (category!=null)
+            {
+                query = query.Where(x => x.Category == category.Value);
+            }
+
+            var ad = await query.FirstAsync(x=>x.IsActive);
 
             return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
         }
 
-        public async Task<Models.Ad> GetNextAsync(int lastShownAdId)
+        public async Task<Models.Ad> GetNextAsync(int lastShownAdId, AdType? type, AdCategory? category)
         {
-            var ad = await _context.Ads//.SkipWhile(x => x.Id <= lastShownAdId)
-                .FirstAsync(x => x.Deleted == null && x.IsActive && x.Id>lastShownAdId);
+            var query = _context.Ads.Where(x => x.Deleted == null);
+
+            if (type != null)
+            {
+                query = query.Where(x => x.Type == type.Value);
+            }
+
+            if (category != null)
+            {
+                query = query.Where(x => x.Category == category.Value);
+            }
+
+            var ad = await query.FirstAsync(x => x.IsActive && x.Id>lastShownAdId);
 
             return new Models.Ad { Id=ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content=ad.Content, IsActive = ad.IsActive };
         }

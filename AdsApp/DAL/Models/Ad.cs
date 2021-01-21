@@ -11,7 +11,7 @@ namespace DAL.Models
         [Required(ErrorMessage = "required")]
         public AdType Type { get; set; }
         [Required(ErrorMessage = "required")]
-        public Category Category { get; set; }
+        public AdCategory Category { get; set; }
         [Required(ErrorMessage = "required")]
         public float Cost { get; set; }
         [Required(ErrorMessage = "required")]

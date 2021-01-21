@@ -63,7 +63,7 @@ namespace BL.Services
             {
                 var response = new AdResponse();
                 var token = _nextTokenService.Decode(encodedToken);
-                var ad = await _adRepository.GetNextAsync(token.LastShownAdId);
+                var ad = await _adRepository.GetNextAsync(token.LastShownAdId,token.Type, token.Category);
 
                 token.LastShownAdId = ad.Id;
                 response.Ad = ad;
@@ -82,14 +82,16 @@ namespace BL.Services
             }
         }
 
-        public async Task<AdResponse> GetAdWithNoTokenAsync()
+        public async Task<AdResponse> GetAdWithNoTokenAsync(AdType? type, AdCategory? category)
         {
             try
             {
                 var adResponse = new AdResponse();
-                var ad = await _adRepository.GetAsync();
+                var ad = await _adRepository.GetAsync(type,category);
                 var token = new NextToken();
 
+                token.Category = category;
+                token.Type = type;
                 token.LastShownAdId = ad.Id;
                 adResponse.Ad = ad;
                 adResponse.Token = _nextTokenService.Encode(token);

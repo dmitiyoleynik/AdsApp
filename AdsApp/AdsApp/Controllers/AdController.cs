@@ -19,7 +19,8 @@ namespace AdsApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<AdResponse>> GetWithToken([FromQuery(Name = "token")] string token)
+        public async Task<ActionResult<AdResponse>> Get([FromQuery] string token,
+            AdType? type, AdCategory? category)
         {
             ActionResult actionResult;
 
@@ -32,7 +33,7 @@ namespace AdsApp.Controllers
                 }
                 else
                 {
-                    var response = await _adService.GetAdWithNoTokenAsync();
+                    var response = await _adService.GetAdWithNoTokenAsync(type,category);
                     actionResult = Ok(response);
                 }
             }

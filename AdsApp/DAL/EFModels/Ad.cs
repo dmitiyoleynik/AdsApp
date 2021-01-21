@@ -8,7 +8,7 @@ namespace DAL.EFModels
     {
         public int Id { get; set; }
         public AdType Type { get; set; }
-        public Category Category { get; set; }
+        public AdCategory Category { get; set; }
         public float Cost { get; set; }
         public string Content { get; set; }
 
