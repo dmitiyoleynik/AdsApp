@@ -22,9 +22,9 @@ namespace BL.Services
             _nextTokenService = nextTokenService;
         }
 
-        public async Task<int> CreateAdAsync(Ad ad)
+        public async Task CreateAdAsync(Ad ad)
         {
-            return await _adRepository.CreateAsync(ad);
+            await _adRepository.CreateAsync(ad);
         }
 
         public async Task DeleteAdAsync(int id)

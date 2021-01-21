@@ -8,7 +8,7 @@ namespace BL.Services
 {
     public interface IAdService
     {
-        Task<int> CreateAdAsync(Ad ad);
+        Task CreateAdAsync(Ad ad);
         Task<AdResponse> GetAdByTokenAsync(string token);
         Task<AdResponse> GetAdWithNoTokenAsync(AdType? type, AdCategory? category);
         Task DeleteAdAsync(int id);

@@ -62,9 +62,9 @@ namespace AdsApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var id = await _adService.CreateAdAsync(ad);
+            await _adService.CreateAdAsync(ad);
 
-            return Ok(id);
+            return Ok();
         }
 
         [HttpPut]

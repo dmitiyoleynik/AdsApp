@@ -14,7 +14,7 @@ namespace DAL.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<int> CreateAsync(Models.Ad ad)
+        public async Task CreateAsync(Models.Ad ad)
         {
             _context.Ads.Add(new EFModels.Ad
             {
@@ -27,8 +27,6 @@ namespace DAL.Repositories
                 Updated = DateTime.Now
             });
             await _context.SaveChangesAsync();
-
-            return _context.Ads.FirstOrDefault(x => x.Content == ad.Content && x.Type == ad.Type && x.Category == ad.Category && x.Cost == ad.Cost).Id;
         }
 
         public async Task DeleteAsync(int id)
