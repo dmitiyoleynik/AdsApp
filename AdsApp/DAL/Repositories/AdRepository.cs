@@ -40,27 +40,9 @@ namespace DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Models.Ad> GetAsync(int id)
-        {
-            var ad = await _context.Ads.FirstOrDefaultAsync(x => x.Id == id);
-            
-            return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
-        }
-
         public async Task<Models.Ad> GetAsync(AdType? type, AdCategory? category)
         {
-            var query = _context.Ads.Where(x=>x.Deleted==null);
-
-            if (type!=null)
-            {
-                query = query.Where(x => x.Type == type.Value);
-            }
-
-            if (category!=null)
-            {
-                query = query.Where(x => x.Category == category.Value);
-            }
-
+            var query = AddFilters(_context.Ads.Where(x => x.Deleted == null), type, category);
             var ad = await query.FirstAsync(x=>x.IsActive);
 
             return new Models.Ad { Id = ad.Id, Category = ad.Category, Type = ad.Type, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
@@ -68,18 +50,8 @@ namespace DAL.Repositories
 
         public async Task<Models.Ad> GetNextAsync(int lastShownAdId, AdType? type, AdCategory? category)
         {
-            var query = _context.Ads.Where(x => x.Deleted == null);
 
-            if (type != null)
-            {
-                query = query.Where(x => x.Type == type.Value);
-            }
-
-            if (category != null)
-            {
-                query = query.Where(x => x.Category == category.Value);
-            }
-
+            var query = AddFilters(_context.Ads.Where(x => x.Deleted == null), type, category);
             var ad = await query.FirstAsync(x => x.IsActive && x.Id>lastShownAdId);
 
             return new Models.Ad { Id=ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content=ad.Content, IsActive = ad.IsActive };
@@ -100,6 +72,20 @@ namespace DAL.Repositories
             await _context.SaveChangesAsync();
 
             return ad;
+        }
+
+        private IQueryable<EFModels.Ad> AddFilters( IQueryable<EFModels.Ad> query,AdType? type, AdCategory? category)
+        {
+            if (type != null)
+            {
+                query = query.Where(x => x.Type == type.Value);
+            }
+
+            if (category != null)
+            {
+                query = query.Where(x => x.Category == category.Value);
+            }
+            return query;
         }
     }
 }
