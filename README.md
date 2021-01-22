@@ -2,6 +2,7 @@
 ## Needed tools
  - MS SQL Server
  - .Net Core 3.1
+ - Entity Framework Core tools
 
 ## Setup and run
  1. Clone repo and build solution.
