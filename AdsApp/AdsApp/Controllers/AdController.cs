@@ -19,6 +19,15 @@ namespace AdsApp.Controllers
             _adService = adService;
         }
 
+        /// <summary>
+        /// Request ad with filtration
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// Could be requested with type and category, in that case will return first suitable ad and next token
+        /// If request with token, will return next sutable ad and new token. If token is indicated, type and category will be ignored.
+        ///
+        /// </remarks>
         [HttpGet]
         public async Task<ActionResult<AdResponse>> Get([FromQuery] string token,
             AdType? type, AdCategory? category)
