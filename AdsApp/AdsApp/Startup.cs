@@ -23,6 +23,7 @@ namespace AdsApp
                 .ConfigureBL()
                 .AddControllers()
                 .AddNewtonsoftJson();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,12 +33,19 @@ namespace AdsApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseSwagger();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {
