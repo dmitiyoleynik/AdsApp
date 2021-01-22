@@ -16,16 +16,9 @@ namespace DAL.Repositories
 
         public async Task CreateAsync(Models.Ad ad)
         {
-            _context.Ads.Add(new EFModels.Ad
-            {
-                Category = ad.Category,
-                Type = ad.Type,
-                Cost = ad.Cost,
-                Content = ad.Content,
-                IsActive = ad.IsActive,
-                Tags = ad.Tags.Select(x=>new EFModels.Tag { Value = x }).ToList(),
-                Updated = DateTime.Now
-            });
+            ad.Updated = DateTime.Now;
+            _context.Ads.Add(ad);
+
             await _context.SaveChangesAsync();
         }
 
@@ -49,7 +42,7 @@ namespace DAL.Repositories
             _context.Ads.Update(ad);
             await _context.SaveChangesAsync();
 
-            return new Models.Ad { Id = ad.Id, Type = ad.Type, Category = ad.Category, Cost = ad.Cost, Content = ad.Content, IsActive = ad.IsActive };
+            return ad;
         }
 
         public async Task<Dictionary<AdType, int>> GetViewsPerType()
@@ -75,7 +68,6 @@ namespace DAL.Repositories
                 .Where(x => x.IsActive)
                 .OrderBy(x => x.Views)
                 .Take(quantity)
-                .Select(x => new Models.Ad { Type = x.Type, Category = x.Category, Content = x.Content, Cost = x.Cost, IsActive = x.IsActive })
                 .ToListAsync();
 
             return ads;
@@ -105,14 +97,15 @@ namespace DAL.Repositories
             oldAd.Cost = ad.Cost;
             oldAd.IsActive = ad.IsActive;
             oldAd.Updated = DateTime.Now;
+            oldAd.Tags = ad.Tags;
 
             _context.Ads.Update(oldAd);
             await _context.SaveChangesAsync();
 
-            return ad;
+            return oldAd;
         }
 
-        private IQueryable<EFModels.Ad> AddFilters(IQueryable<EFModels.Ad> query, AdType? type, AdCategory? category)
+        private IQueryable<Models.Ad> AddFilters(IQueryable<Models.Ad> query, AdType? type, AdCategory? category)
         {
             if (type != null)
             {
@@ -123,6 +116,7 @@ namespace DAL.Repositories
             {
                 query = query.Where(x => x.Category == category.Value);
             }
+
             return query;
         }
     }

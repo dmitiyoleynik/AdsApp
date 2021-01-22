@@ -1,7 +1,7 @@
 ﻿using BL.DTO;
 using BL.Services;
 using DAL.Exceptions;
-using DAL.Models;
+using BL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -59,9 +59,6 @@ namespace AdsApp.Controllers
         [HttpPost]
         public async Task<ActionResult<int>> PostAsync(Ad ad)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
-
             await _adService.CreateAdAsync(ad);
 
             return Ok();

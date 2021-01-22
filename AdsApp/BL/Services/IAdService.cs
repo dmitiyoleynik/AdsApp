@@ -1,7 +1,5 @@
 ﻿using BL.DTO;
-using DAL.Models;
-using System;
-using System.Collections.Generic;
+using BL.Models;
 using System.Threading.Tasks;
 
 namespace BL.Services

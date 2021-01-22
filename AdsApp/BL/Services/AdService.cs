@@ -3,6 +3,7 @@ using BL.Models;
 using DAL.Exceptions;
 using DAL.Models;
 using DAL.Repositories;
+using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BL.Services
 {
-    public class AdService:IAdService
+    public class AdService : IAdService
     {
         private readonly IAdRepository _adRepository;
         private readonly INextTokenService _nextTokenService;
@@ -20,11 +21,24 @@ namespace BL.Services
         {
             _adRepository = adRepository;
             _nextTokenService = nextTokenService;
+            //TypeAdapterConfig<string, DAL.Models.Tag>
+            //    .ForType()
+            //    .Map(dest => dest.Value,
+            //    src => src);
+            //TypeAdapterConfig<DAL.Models.Tag, string>
+            //    .ForType()
+            //    .Map(dest => dest,
+            //    src => src.Value);
+            TypeAdapterConfig<string, Tag>.NewConfig()
+            .MapWith(str => new Tag { Value = str });
+            TypeAdapterConfig<Tag,string>.NewConfig()
+            .MapWith(tag =>tag.Value);
         }
 
-        public async Task CreateAdAsync(Ad ad)
+        public async Task CreateAdAsync(Models.Ad ad)
         {
-            await _adRepository.CreateAsync(ad);
+            var dalAd = ad.Adapt<DAL.Models.Ad>();
+            await _adRepository.CreateAsync(dalAd);
         }
 
         public async Task DeleteAdAsync(int id)
@@ -39,11 +53,14 @@ namespace BL.Services
             }
         }
 
-        public async Task<Ad> UpdateAdAsync(Ad ad)
+        public async Task<Models.Ad> UpdateAdAsync(Models.Ad ad)
         {
             try
             {
-                return await _adRepository.UpdateAsync(ad);
+                var oldAd = ad.Adapt<DAL.Models.Ad>();
+                var newAd = await _adRepository.UpdateAsync(oldAd);
+
+                return newAd.Adapt<Models.Ad>();
             }
             catch (Exception)
             {
@@ -60,7 +77,7 @@ namespace BL.Services
                 var ad = await _adRepository.GetNextAsync(token.Type, token.Category, token.LastShownAdId);
 
                 token.LastShownAdId = ad.Id;
-                response.Ad = ad;
+                response.Ad = ad.Adapt<Models.Ad>();
                 response.Token = _nextTokenService.Encode(token);
 
                 return response;
@@ -81,13 +98,13 @@ namespace BL.Services
             try
             {
                 var adResponse = new AdResponse();
-                var ad = await _adRepository.GetNextAsync(type,category);
+                var ad = await _adRepository.GetNextAsync(type, category);
                 var token = new NextToken();
 
                 token.Category = category;
                 token.Type = type;
                 token.LastShownAdId = ad.Id;
-                adResponse.Ad = ad;
+                adResponse.Ad = ad.Adapt<Models.Ad>();
                 adResponse.Token = _nextTokenService.Encode(token);
 
                 return adResponse;
@@ -102,7 +119,8 @@ namespace BL.Services
         {
             var statistics = new Statistics();
             statistics.TopCategories = await _adRepository.TopCategories(3);
-            statistics.TopAds = await _adRepository.TopAds(10);
+            var ads = await _adRepository.TopAds(10);
+            statistics.TopAds = ads.Adapt<List<Models.Ad>>();
             statistics.RequestsPerType = await _adRepository.GetViewsPerType();
 
             return statistics;
