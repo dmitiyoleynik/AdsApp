@@ -1,4 +1,5 @@
-﻿using BL.Services;
+﻿using BL;
+using BL.Services;
 using DAL;
 using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace AdsApp.Extensions
         public static IServiceCollection ConfigureDAL(this IServiceCollection services)
         {
             services.AddDbContext<ApplicationDBContext>(
-                options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
+                options => options.UseSqlServer(Constants.ConnectionString));
             services.AddScoped<IAdRepository, AdRepository>();
 
             return services;

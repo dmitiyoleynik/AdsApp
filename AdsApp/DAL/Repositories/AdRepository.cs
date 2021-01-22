@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace DAL.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task CreateAsync(Models.Ad ad)
+        public async Task CreateAsync(Ad ad)
         {
             ad.Updated = DateTime.Now;
             _context.Ads.Add(ad);
@@ -33,10 +34,10 @@ namespace DAL.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Models.Ad> GetNextAsync(AdType? type, AdCategory? category, int lastShownAdId = 0)
+        public async Task<Ad> GetNextAsync(AdType? type, AdCategory? category, int lastShownAdId = 0)
         {
-            var query = AddFilters(_context.Ads.Where(x => x.Deleted == null), type, category);
-            var ad = await query.FirstAsync(x => x.IsActive && x.Id > lastShownAdId);
+            var query = AddFilters(_context.Ads, type, category);
+            var ad = await query.FirstAsync(x => x.Id > lastShownAdId);
             ad.Views++;
 
             _context.Ads.Update(ad);
@@ -45,24 +46,24 @@ namespace DAL.Repositories
             return ad;
         }
 
-        public async Task<Dictionary<AdType, int>> GetViewsPerType()
+        public async Task<Dictionary<AdType, int>> GetViewsPerTypeAsync()
         {
-            var dict = new Dictionary<AdType, int>();
+            var viewsPerTypeDictionary = new Dictionary<AdType, int>();
             var viewsPerType = await _context.Ads.Where(x => x.Deleted == null)
                 .Where(x => x.IsActive)
                 .GroupBy(x => x.Type)
-                .Select(g => new { Type = g.Key, Views = g.Sum(x => x.Views) })
+                .Select(x => new { Type = x.Key, Views = x.Sum(y => y.Views) })
                 .ToListAsync();
 
             foreach (var viewPerType in viewsPerType)
             {
-                dict.Add(viewPerType.Type, viewPerType.Views);
+                viewsPerTypeDictionary.Add(viewPerType.Type, viewPerType.Views);
             }
 
-            return dict;
+            return viewsPerTypeDictionary;
         }
 
-        public async Task<List<Models.Ad>> TopAds(int quantity)
+        public async Task<List<Ad>> TopAdsAsync(int quantity)
         {
             var ads = await _context.Ads.Where(x => x.Deleted == null)
                 .Where(x => x.IsActive)
@@ -73,7 +74,7 @@ namespace DAL.Repositories
             return ads;
         }
 
-        public async Task<List<AdCategory>> TopCategories(int quantity)
+        public async Task<List<AdCategory>> TopCategoriesAsync(int quantity)
         {
             var categories = await _context.Ads.Where(x => x.Deleted == null)
                 .Where(x => x.IsActive)
@@ -87,7 +88,7 @@ namespace DAL.Repositories
             return categories;
         }
 
-        public async Task<Models.Ad> UpdateAsync(Models.Ad ad)
+        public async Task<Ad> UpdateAsync(Ad ad)
         {
             var oldAd = await _context.Ads.FirstAsync(x => x.Id == ad.Id && x.Deleted == null);
 
@@ -105,8 +106,10 @@ namespace DAL.Repositories
             return oldAd;
         }
 
-        private IQueryable<Models.Ad> AddFilters(IQueryable<Models.Ad> query, AdType? type, AdCategory? category)
+        private IQueryable<Ad> AddFilters(DbSet<Ad> ads, AdType? type, AdCategory? category)
         {
+            var query = ads.Where(x => x.IsActive && x.Deleted == null);
+
             if (type != null)
             {
                 query = query.Where(x => x.Type == type.Value);

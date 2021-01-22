@@ -19,20 +19,13 @@ namespace BL.Services
         public AdService(IAdRepository adRepository,
             INextTokenService nextTokenService)
         {
-            _adRepository = adRepository;
-            _nextTokenService = nextTokenService;
-            //TypeAdapterConfig<string, DAL.Models.Tag>
-            //    .ForType()
-            //    .Map(dest => dest.Value,
-            //    src => src);
-            //TypeAdapterConfig<DAL.Models.Tag, string>
-            //    .ForType()
-            //    .Map(dest => dest,
-            //    src => src.Value);
+            _adRepository = adRepository ?? throw new ArgumentNullException(nameof(adRepository));
+            _nextTokenService = nextTokenService ?? throw new ArgumentNullException(nameof(nextTokenService));
+
             TypeAdapterConfig<string, Tag>.NewConfig()
-            .MapWith(str => new Tag { Value = str });
-            TypeAdapterConfig<Tag,string>.NewConfig()
-            .MapWith(tag =>tag.Value);
+                .MapWith(str => new Tag { Value = str });
+            TypeAdapterConfig<Tag, string>.NewConfig()
+                .MapWith(tag => tag.Value);
         }
 
         public async Task CreateAdAsync(Models.Ad ad)
@@ -81,7 +74,6 @@ namespace BL.Services
                 response.Token = _nextTokenService.Encode(token);
 
                 return response;
-
             }
             catch (JsonException)
             {
@@ -118,10 +110,11 @@ namespace BL.Services
         public async Task<Statistics> GetStatistics()
         {
             var statistics = new Statistics();
-            statistics.TopCategories = await _adRepository.TopCategories(3);
-            var ads = await _adRepository.TopAds(10);
+            var ads = await _adRepository.TopAdsAsync(10);
+
+            statistics.TopCategories = await _adRepository.TopCategoriesAsync(3);
             statistics.TopAds = ads.Adapt<List<Models.Ad>>();
-            statistics.RequestsPerType = await _adRepository.GetViewsPerType();
+            statistics.RequestsPerType = await _adRepository.GetViewsPerTypeAsync();
 
             return statistics;
         }

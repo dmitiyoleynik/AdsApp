@@ -4,6 +4,7 @@ using DAL.Exceptions;
 using BL.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using BL;
 
 namespace AdsApp.Controllers
 {
@@ -22,38 +23,43 @@ namespace AdsApp.Controllers
         public async Task<ActionResult<AdResponse>> Get([FromQuery] string token,
             AdType? type, AdCategory? category)
         {
-            ActionResult actionResult;
-
             try
             {
-                if (token!=null)
+                ActionResult actionResult;
+
+                if (token != null)
                 {
                     var response = await _adService.GetAdByTokenAsync(token);
                     actionResult = Ok(response);
                 }
                 else
                 {
-                    var response = await _adService.GetAdWithNoTokenAsync(type,category);
+                    var response = await _adService.GetAdWithNoTokenAsync(type, category);
                     actionResult = Ok(response);
                 }
+
+                return actionResult;
             }
             catch (InvalidNextTokenException)
             {
-                actionResult = BadRequest();
+                return BadRequest(Constants.Messages.InvalidToken);
             }
             catch (RecordNotFoundException)
             {
+                ActionResult actionResult;
+
                 if (token != null)
                 {
-                    actionResult = Ok("Queue is finished.");
+                    actionResult = Ok(Constants.Messages.QueueFinished);
                 }
                 else
                 {
                     actionResult = BadRequest();
                 }
+
+                return actionResult;
             }
 
-            return actionResult;
         }
 
         [HttpPost]
@@ -69,9 +75,9 @@ namespace AdsApp.Controllers
         {
             try
             {
-                var id = await _adService.UpdateAdAsync(ad);
-             
-                return Ok(id);
+                var newAd = await _adService.UpdateAdAsync(ad);
+
+                return Ok(newAd);
             }
             catch (RecordNotFoundException)
             {
@@ -85,15 +91,15 @@ namespace AdsApp.Controllers
             try
             {
                 await _adService.DeleteAdAsync(id);
+
+                return NoContent();
             }
             catch (RecordNotFoundException)
             {
                 return BadRequest();
             }
-
-            return NoContent();
         }
-      
+
         [HttpGet("statistics")]
         public async Task<Statistics> Statistics()
         {
